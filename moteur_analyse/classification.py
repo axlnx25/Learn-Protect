@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass
 from typing import Optional
-from .score_de_risque import ScoreResult
+from moteur_analyse.score_de_risque import ScoreResult
 
 
 @dataclass
@@ -56,7 +56,7 @@ class Classifier:
 # ------------------------------------
 if __name__ == "__main__":
     # exemple de test
-    from .score_de_risque import ScoringEngine
+    from moteur_analyse.score_de_risque import ScoringEngine
 
     triggers = [
         {"rule_id": "PATH_TMP", "score": 20, "message": "Depuis /tmp"},
