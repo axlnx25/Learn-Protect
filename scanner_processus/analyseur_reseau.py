@@ -5,6 +5,7 @@ from typing import Optional, List
 import psutil
 import socket
 import ipaddress
+import os
 from datetime import datetime, timezone
 
 
@@ -137,7 +138,7 @@ if __name__ == "__main__":
     parser.add_argument("pid", type=int, help="PID to inspect")
     args = parser.parse_args()
 
-    na = NetworkAnalyzer(args.pid)
+    na = NetworkAnalyzer(os.getgid())
     conns = na.list_connections()
 
     # serialize dataclasses to dict

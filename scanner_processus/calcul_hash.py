@@ -1,93 +1,102 @@
-# module_a/process_lister.py
+# module_a/hash_calculator.py
 
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import Optional
+import hashlib
+import os
 from datetime import datetime, timezone
-import psutil
+
+
+CHUNK_SIZE = 1024 * 1024  # 1 MB pour éviter d'utiliser trop de RAM
 
 
 @dataclass
-class ProcessInfo:
-    pid: int
-    name: str
-    exe: Optional[str]
-    cmdline: List[str]
-    username: Optional[str]
-    ppid: Optional[int]
-    status: str
-    create_time: Optional[str]
+class FileHashResult:
+    path: str
+    sha256: Optional[str]
+    size_bytes: Optional[int]
+    mtime: Optional[str]
+    success: bool
+    error: Optional[str]
 
 
-class ProcessLister:
+class HashCalculator:
     """
-    Classe responsable de la récupération de la liste complète des processus.
-    Fournit une interface robuste, orientée-objet et réutilisable par le moteur B.
+    Module de calcul du hash SHA-256 d'un fichier.
+    - Non bloquant (ne modifie pas le système)
+    - Sécurisé (gère les erreurs)
+    - Optimisé (lecture en chunks)
     """
 
     def __init__(self):
         pass
 
-    def _safe_process_info(self, p: psutil.Process) -> Optional[ProcessInfo]:
+    def compute_sha256(self, filepath: str) -> FileHashResult:
         """
-        Tente de récupérer les métadonnées d'un processus.
-        Renvoie None si non accessible (AccessDenied/NoSuchProcess).
+        Calcule le SHA-256 du fichier passé en paramètre.
+        Retourne un FileHashResult.
         """
-        try:
-            pid = p.pid
-            name = p.name()
 
-            try:
-                exe = p.exe()
-            except Exception:
-                exe = None
-
-            try:
-                cmdline = p.cmdline()
-            except Exception:
-                cmdline = []
-
-            try:
-                username = p.username()
-            except Exception:
-                username = None
-
-            try:
-                ppid = p.ppid()
-            except Exception:
-                ppid = None
-
-            try:
-                status = p.status()
-            except Exception:
-                status = "unknown"
-
-            try:
-                ct = datetime.fromtimestamp(p.create_time(), timezone.utc).isoformat()
-            except Exception:
-                ct = None
-
-            return ProcessInfo(
-                pid=pid,
-                name=name,
-                exe=exe,
-                cmdline=cmdline,
-                username=username,
-                ppid=ppid,
-                status=status,
-                create_time=ct
+        if not os.path.exists(filepath):
+            return FileHashResult(
+                path=filepath,
+                sha256=None,
+                size_bytes=None,
+                mtime=None,
+                success=False,
+                error="File not found"
             )
 
-        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
-            return None
+        if not os.path.isfile(filepath):
+            return FileHashResult(
+                path=filepath,
+                sha256=None,
+                size_bytes=None,
+                mtime=None,
+                success=False,
+                error="Not a regular file"
+            )
 
-    def list_processes(self) -> List[ProcessInfo]:
-        """
-        Retourne une liste d'objets ProcessInfo.
-        Ignore les processus inaccessibles.
-        """
-        processes = []
-        for proc in psutil.process_iter():
-            info = self._safe_process_info(proc)
-            if info:
-                processes.append(info)
-        return processes
+        try:
+            hasher = hashlib.sha256()
+
+            with open(filepath, "rb") as f:
+                while True:
+                    chunk = f.read(CHUNK_SIZE)
+                    if not chunk:
+                        break
+                    hasher.update(chunk)
+
+            size_bytes = os.path.getsize(filepath)
+            mtime = datetime.fromtimestamp(
+                os.path.getmtime(filepath), timezone.utc
+            ).isoformat()
+
+            return FileHashResult(
+                path=filepath,
+                sha256=hasher.hexdigest(),
+                size_bytes=size_bytes,
+                mtime=mtime,
+                success=True,
+                error=None
+            )
+
+        except PermissionError:
+            return FileHashResult(
+                path=filepath,
+                sha256=None,
+                size_bytes=None,
+                mtime=None,
+                success=False,
+                error="Access denied"
+            )
+
+        except Exception as e:
+            return FileHashResult(
+                path=filepath,
+                sha256=None,
+                size_bytes=None,
+                mtime=None,
+                success=False,
+                error=str(e)
+            )
