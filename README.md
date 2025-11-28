@@ -2,7 +2,7 @@
 
 Outil de surveillance et d'analyse des processus système avec heuristiques de sécurité intégrées.
 
-**This project is a desktop application based on windows which analyses suspicious process in the computer and dispatches alert to the user with an  description of the alert so the user learn about cybersecurity concepts while protecting his computer.**
+**Learn&Protect est une application de sécurité conçue pour analyser les processus d’un ordinateur en temps réel et alerter l’utilisateur en cas de comportement suspect. Elle combine la détection heuristique et l’apprentissage de la cybersécurité.**
 
 ## 🎯 Fonctionnalités
 
