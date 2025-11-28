@@ -702,6 +702,9 @@ def index():
             updateData();
             setInterval(updateData, 2000);
         </script>
+        <footer style="background: rgba(0,0,0,0.18); border-top:1px solid rgba(0,255,136,0.06); padding:12px 20px; color:#9fb0c8; text-align:center; font-size:0.9em;">
+            © 2025 Learn&Protect — Tous droits réservés. Pour la documentation, voir <a href="/infos" style="color:#7ee787; text-decoration:none;">Infos</a>.
+        </footer>
     </body>
     </html>
     """
@@ -771,6 +774,10 @@ def network_view():
                 margin-bottom: 10px;
                 color: #00ff88;
             }
+            .header p {
+                color: #9fb0c8;
+                font-size: 1.05em;
+            }
             .network-section {
                 background: rgba(255, 255, 255, 0.05);
                 padding: 20px;
@@ -783,35 +790,126 @@ def network_view():
                 font-size: 1.5em;
             }
             .process-card {
-                background: rgba(255, 255, 255, 0.03);
-                border: 1px solid rgba(0, 255, 136, 0.1);
-                border-radius: 8px;
-                padding: 15px;
+                background: linear-gradient(135deg, rgba(0,255,136,0.05) 0%, rgba(0,0,0,0.2) 100%);
+                border: 1px solid rgba(0, 255, 136, 0.15);
+                border-radius: 10px;
+                padding: 20px;
                 margin-bottom: 15px;
+                overflow: hidden;
             }
             .process-header {
                 font-weight: bold;
-                color: #7ee787;
-                margin-bottom: 10px;
-                font-size: 1.1em;
+                color: #00ff88;
+                margin-bottom: 12px;
+                font-size: 1.2em;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            .process-header::before {
+                content: "▶";
+                font-size: 0.8em;
             }
             .process-meta {
-                font-size: 0.85em;
-                color: #9fb0c8;
-                margin-bottom: 10px;
-            }
-            .connection {
-                background: rgba(0, 255, 136, 0.05);
-                border-left: 3px solid #00ff88;
-                padding: 10px;
-                margin-bottom: 8px;
-                border-radius: 4px;
-                font-family: monospace;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+                margin-bottom: 15px;
                 font-size: 0.9em;
+                color: #bbb;
+                padding: 10px;
+                background: rgba(0,0,0,0.2);
+                border-radius: 6px;
+            }
+            .process-meta div {
+                display: flex;
+                gap: 6px;
+                align-items: center;
+            }
+            .meta-label {
+                color: #7ee787;
+                font-weight: 600;
+                min-width: 90px;
+            }
+            .connection-group {
+                margin-bottom: 12px;
+            }
+            .connection-group-title {
+                color: #ffb400;
+                font-weight: 600;
+                margin-bottom: 8px;
+                font-size: 0.95em;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            }
+            .connection-item {
+                background: rgba(0, 255, 136, 0.08);
+                border-left: 3px solid #00ff88;
+                padding: 12px;
+                margin-bottom: 8px;
+                border-radius: 6px;
+                font-size: 0.9em;
+            }
+            .connection-detail {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+                margin-top: 8px;
+            }
+            .address-pair {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+            }
+            .address-label {
+                font-size: 0.8em;
+                color: #888;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+            .address-value {
+                font-family: 'Courier New', monospace;
+                color: #7ee787;
+                font-weight: 500;
+                word-break: break-all;
+            }
+            .protocol-badge {
+                display: inline-block;
+                background: rgba(0,255,136,0.2);
+                color: #00ff88;
+                padding: 3px 8px;
+                border-radius: 4px;
+                font-size: 0.8em;
+                font-weight: 600;
+                margin-right: 8px;
+                text-transform: uppercase;
+            }
+            .status-badge {
+                display: inline-block;
+                background: rgba(100,200,255,0.2);
+                color: #64c8ff;
+                padding: 3px 8px;
+                border-radius: 4px;
+                font-size: 0.8em;
+            }
+            .external-warning {
+                background: rgba(255, 180, 0, 0.15);
+                border-left: 3px solid #ffb400;
+                padding: 10px;
+                margin-top: 10px;
+                border-radius: 4px;
+                color: #ffb400;
+                font-size: 0.9em;
+                display: flex;
+                align-items: center;
+                gap: 8px;
             }
             .no-conn {
                 color: #666;
                 font-style: italic;
+                padding: 10px;
+                text-align: center;
             }
             .scroll-area {
                 max-height: 65vh;
@@ -829,6 +927,20 @@ def network_view():
                 font-size: 0.85em;
                 margin-top: 15px;
             }
+            .info-tooltip {
+                display: inline-block;
+                width: 16px;
+                height: 16px;
+                background: rgba(0,255,136,0.3);
+                border: 1px solid rgba(0,255,136,0.5);
+                border-radius: 50%;
+                text-align: center;
+                line-height: 14px;
+                font-size: 0.8em;
+                color: #00ff88;
+                cursor: help;
+                title: "Plus d'informations";
+            }
         </style>
     </head>
     <body>
@@ -842,12 +954,12 @@ def network_view():
 
         <div class="container">
             <div class="header">
-                <h1>🌐 Informations Réseau</h1>
-                <p>Détail des connexions réseau par processus</p>
+                <h1>🌐 Connexions Réseau en Temps Réel</h1>
+                <p>Découvrez quels programmes se connectent à Internet et vers où</p>
             </div>
 
             <div class="network-section">
-                <h2>Connexions Réseau par Processus</h2>
+                <h2>📡 Détail des Connexions par Programme</h2>
                 <div class="scroll-area" id="networkContent">
                     <div class="loading">Chargement des données réseau...</div>
                 </div>
@@ -866,6 +978,19 @@ def network_view():
                     .catch(e => console.error("Erreur:", e));
             }
 
+            function formatAddress(ip, port) {
+                if (!ip || ip === '?') return 'Adresse locale';
+                if (port && port !== '?') return ip + ':' + port;
+                return ip;
+            }
+
+            function getProtocolEmoji(protocol) {
+                const p = (protocol || '').toUpperCase();
+                if (p === 'TCP') return '🔗';
+                if (p === 'UDP') return '📦';
+                return '📡';
+            }
+
             function displayNetworkInfo(processes) {
                 const content = document.getElementById("networkContent");
                 content.innerHTML = "";
@@ -873,7 +998,7 @@ def network_view():
                 const withNetwork = processes.filter(p => p.network && p.network.length > 0);
 
                 if (withNetwork.length === 0) {
-                    content.innerHTML = '<div class="loading">Aucun processus avec connexions réseau actives</div>';
+                    content.innerHTML = '<div class="loading">Aucun processus avec connexions réseau actives (pas de trafic détecté)</div>';
                     return;
                 }
 
@@ -882,25 +1007,77 @@ def network_view():
                     card.className = "process-card";
 
                     let html = `
-                        <div class="process-header">${proc.name} (PID ${proc.pid})</div>
-                        <div class="process-meta">Utilisateur: ${proc.user || 'N/A'} | Exécutable: ${proc.exe || 'N/A'}</div>
+                        <div class="process-header">${proc.name}</div>
+                        <div class="process-meta">
+                            <div><span class="meta-label">👤 Utilisateur:</span> <span>${proc.user || 'N/A'}</span></div>
+                            <div><span class="meta-label">🔢 ID:</span> <span>${proc.pid}</span></div>
+                            <div><span class="meta-label">📂 Chemin:</span> <span>${proc.exe ? proc.exe.substring(proc.exe.lastIndexOf('/')+1) : 'N/A'}</span></div>
+                            <div><span class="meta-label">💾 Mémoire:</span> <span>${proc.memory ? Math.round(proc.memory/1024/1024) + ' MB' : 'N/A'}</span></div>
+                        </div>
                     `;
 
                     if (proc.network && proc.network.length > 0) {
-                        proc.network.forEach(conn => {
-                            const local = `${conn.laddr_ip || '?'}:${conn.laddr_port || '?'}`;
-                            const remote = `${conn.raddr_ip || '?'}:${conn.raddr_port || '?'}`;
-                            html += `
-                                <div class="connection">
-                                    <div><strong>${conn.protocol || 'UNKNOWN'}</strong> ${conn.status || ''}</div>
-                                    <div>Local:  ${local}</div>
-                                    <div>Remote: ${remote}</div>
-                                    ${conn.is_external ? '<div style="color:#ffb400">⚠️ Adresse externe détectée</div>' : ''}
-                                </div>
-                            `;
-                        });
+                        const tcpConns = proc.network.filter(c => (c.protocol || '').toUpperCase() === 'TCP');
+                        const udpConns = proc.network.filter(c => (c.protocol || '').toUpperCase() === 'UDP');
+
+                        if (tcpConns.length > 0) {
+                            html += '<div class="connection-group"><div class="connection-group-title">🔗 Connexions TCP (fiables)</div>';
+                            tcpConns.forEach(conn => {
+                                const local = formatAddress(conn.laddr_ip, conn.laddr_port);
+                                const remote = formatAddress(conn.raddr_ip, conn.raddr_port);
+                                const isExternal = conn.is_external ? '⚠️' : '';
+                                html += `
+                                    <div class="connection-item">
+                                        <div>
+                                            <span class="protocol-badge">TCP</span>
+                                            <span class="status-badge">${conn.status || 'CONNECTÉ'}</span>
+                                            ${isExternal}
+                                        </div>
+                                        <div class="connection-detail">
+                                            <div class="address-pair">
+                                                <div class="address-label">De (Local):</div>
+                                                <div class="address-value">${local}</div>
+                                            </div>
+                                            <div class="address-pair">
+                                                <div class="address-label">Vers (Distant):</div>
+                                                <div class="address-value">${remote}</div>
+                                            </div>
+                                        </div>
+                                        ${conn.is_external ? '<div class="external-warning">⚠️ Connexion vers une adresse externe</div>' : ''}
+                                    </div>
+                                `;
+                            });
+                            html += '</div>';
+                        }
+
+                        if (udpConns.length > 0) {
+                            html += '<div class="connection-group"><div class="connection-group-title">📦 Connexions UDP (rapides)</div>';
+                            udpConns.forEach(conn => {
+                                const local = formatAddress(conn.laddr_ip, conn.laddr_port);
+                                const remote = formatAddress(conn.raddr_ip, conn.raddr_port);
+                                html += `
+                                    <div class="connection-item">
+                                        <div>
+                                            <span class="protocol-badge">UDP</span>
+                                            <span class="status-badge">${conn.status || 'ACTIF'}</span>
+                                        </div>
+                                        <div class="connection-detail">
+                                            <div class="address-pair">
+                                                <div class="address-label">De (Local):</div>
+                                                <div class="address-value">${local}</div>
+                                            </div>
+                                            <div class="address-pair">
+                                                <div class="address-label">Vers (Distant):</div>
+                                                <div class="address-value">${remote}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `;
+                            });
+                            html += '</div>';
+                        }
                     } else {
-                        html += '<div class="no-conn">Aucune connexion réseau active</div>';
+                        html += '<div class="no-conn">Aucune connexion réseau active pour ce processus</div>';
                     }
 
                     card.innerHTML = html;
@@ -912,6 +1089,9 @@ def network_view():
             updateNetwork();
             setInterval(updateNetwork, 3000);
         </script>
+        <footer style="background: rgba(0,0,0,0.18); border-top:1px solid rgba(0,255,136,0.06); padding:12px 20px; color:#9fb0c8; text-align:center; font-size:0.9em;">
+            © 2025 Learn&Protect — Tous droits réservés. Pour la documentation, voir <a href="/infos" style="color:#7ee787; text-decoration:none;">Infos</a>.
+        </footer>
     </body>
     </html>
     """
@@ -1440,6 +1620,9 @@ def learning_page():
             // Mise à jour périodique des alertes
             setInterval(loadAlerts, 5000);
         </script>
+        <footer style="background: rgba(0,0,0,0.18); border-top:1px solid rgba(0,255,136,0.06); padding:12px 20px; color:#9fb0c8; text-align:center; font-size:0.9em;">
+            © 2025 Learn&Protect — Tous droits réservés. Pour la documentation, voir <a href="/infos" style="color:#7ee787; text-decoration:none;">Infos</a>.
+        </footer>
     </body>
     </html>
     """

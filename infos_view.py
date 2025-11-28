@@ -254,7 +254,14 @@ INFOS_HTML = """
         <div class="sidebar-note">
             <strong>⚠️ Note importante :</strong> Learn-Protect est un outil de sensibilisation et de monitoring. Il ne remplace pas une solution antivirus ou firewall complète. Utilisez-le en complément de vos mesures de sécurité existantes.
         </div>
+        <!-- Sidebar note -->
+        <div class="sidebar-note">
+            <strong>⚠️ Note importante :</strong> Learn-Protect est un outil de sensibilisation et de monitoring. Il ne remplace pas une solution antivirus ou firewall complète. Utilisez-le en complément de vos mesures de sécurité existantes.
+        </div>
     </div>
+    <footer style="background: rgba(0,0,0,0.18); border-top:1px solid rgba(0,255,136,0.06); padding:12px 20px; color:#9fb0c8; text-align:center; font-size:0.9em;">
+        © 2025 Learn&Protect — Tous droits réservés. Pour la documentation, voir <a href="/infos" style="color:#7ee787; text-decoration:none;">Infos</a>.
+    </footer>
 </body>
 </html>
 """
