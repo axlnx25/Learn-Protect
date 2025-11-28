@@ -30,6 +30,11 @@ except ImportError:
     print("ERROR: psutil requis. Installez: pip install psutil")
     sys.exit(1)
 
+try:
+    from infos_view import INFOS_HTML
+except ImportError:
+    INFOS_HTML = None
+
 
 def _to_serializable(obj: Any) -> Any:
     """Convertit les objets dataclass et complexes en JSON-compatible."""
@@ -502,6 +507,7 @@ def index():
             <a href="/" class="active">Dashboard</a>
             <a href="/network">Réseau</a>
             <a href="/learning">📚 Learning</a>
+            <a href="/infos">ℹ️ Infos</a>
             <div style="margin-left: auto;">
                 <a href="/learning" id="alertBell" style="font-size: 1.5em; cursor: pointer;">🔔</a>
             </div>
@@ -831,6 +837,7 @@ def network_view():
             <a href="/">Dashboard</a>
             <a href="/network" class="active">Réseau</a>
             <a href="/learning">📚 Learning</a>
+            <a href="/infos">ℹ️ Infos</a>
         </nav>
 
         <div class="container">
@@ -1289,6 +1296,7 @@ def learning_page():
             <a href="/">Dashboard</a>
             <a href="/network">Réseau</a>
             <a href="/learning" class="active">📚 Learning</a>
+            <a href="/infos">ℹ️ Infos</a>
         </nav>
 
         <div class="container">
@@ -1436,6 +1444,14 @@ def learning_page():
     </html>
     """
     return render_template_string(html)
+
+
+@app.route("/infos", methods=["GET"])
+def infos():
+    """Page d'information et glossaire Learn-Protect."""
+    if INFOS_HTML:
+        return render_template_string(INFOS_HTML)
+    return "<h1>Page Infos indisponible</h1>", 404
 
 
 @app.route("/health", methods=["GET"])
